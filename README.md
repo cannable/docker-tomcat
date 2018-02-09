@@ -5,7 +5,12 @@ common tasks.
 
 # Changing Build-Time Configuration
 
-There are three things in the config file to care about:
+There are four things in the config file to care about:
+
+## FROM
+
+Out of the box, this will build around Tomcat 9/JRE 8, though Tomcat 8 works,
+and 7 should. Change this to suit your needs.
 
 ## ENV_TC_USER
 
