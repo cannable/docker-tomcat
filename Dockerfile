@@ -1,4 +1,4 @@
-FROM tomcat:8.0-jre8
+FROM tomcat:9.0-jre8
 ENV NAME HARDTC
 ENV TC_USER tomcat
 ENV TC_UID 6060
