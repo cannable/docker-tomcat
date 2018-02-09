@@ -1,30 +1,37 @@
 # docker-tomcat
 
 This provides Tomcat plus some simple/dumb scripting to help automate some
-common tasks.
+common tasks. Oh, and dumb-init is being used.
 
 # Changing Build-Time Configuration
 
 There are four things in the config file to care about:
 
-## FROM
+**FROM**
 
-Out of the box, this will build around Tomcat 9/JRE 8, though Tomcat 8 works,
-and 7 should. Change this to suit your needs.
+You'll notice a bunch of different directories in the git tree - these
+correspond with the Docker tags. Currently, there are only two sets of config
+files, one for 'micro' builds that are based on Alpine, and 'mega' builds that
+are built on Debian. The micro config deviates from the mega one, only in the
+build.sh file (it uses apk instead of apt to do stuff, and has commands
+tailored for BusyBox. At some point, I'll probably fix this.
 
-## ENV_TC_USER
+Having said all that, if you need a combo that isn't built, just copy the
+directory and tweak the FROM line in the Docker file.
+
+**ENV_TC_USER**
 
 Sets the user and group name of the user that runs Tomcat.
 
-## ENV_TC_UID
+**ENV_TC_UID**
 
 Sets the user and group ID of the user that runs Tomcat.
 
-## EXPOSE 8080/tcp
+**EXPOSE 8080/tcp**
 
 Change this to match your Tomcat config.
 
-## File Overrides
+**File Overrides**
 
 Any files/directories created under this directory will be merged into the
 Tomcat root directory, replacing the originals. Good candidates include config
