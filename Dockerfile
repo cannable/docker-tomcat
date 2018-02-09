@@ -7,5 +7,6 @@ COPY ["./data", "/data"]
 COPY ["./overrides", "/data/overrides"]
 RUN ["/bin/sh", "/data/build.sh"]
 EXPOSE 8080/tcp
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["/bin/sh", "/data/init.sh"]
 
