@@ -3,9 +3,21 @@
 This provides Tomcat plus some simple/dumb scripting to help automate some
 common tasks. Oh, and dumb-init is being used.
 
+# Changing Run-Time Configuration
+
+You can change these settings at run time.
+
+**ENV_TC_USER**
+
+Sets the user and group name of the user that runs Tomcat.
+
+**ENV_TC_UID**
+
+Sets the user and group ID of the user that runs Tomcat.
+
 # Changing Build-Time Configuration
 
-There are four things in the config file to care about:
+There are two things in the config file to care about:
 
 **FROM**
 
@@ -18,14 +30,6 @@ tailored for BusyBox. At some point, I'll probably fix this.
 
 Having said all that, if you need a combo that isn't built, just copy the
 directory and tweak the FROM line in the Docker file.
-
-**ENV_TC_USER**
-
-Sets the user and group name of the user that runs Tomcat.
-
-**ENV_TC_UID**
-
-Sets the user and group ID of the user that runs Tomcat.
 
 **EXPOSE 8080/tcp**
 
@@ -42,7 +46,7 @@ An example setenv.sh is located at overrides/bin/setenv.sh.
 # Build-Time Automation
 
 Alter data/build.sh. This script deletes all default webapps except the
-manager, replaces files with overrides, and creates a user for Tomcat.
+manager, then replaces files with overrides.
 
 # Changing Run-Time Config
 
