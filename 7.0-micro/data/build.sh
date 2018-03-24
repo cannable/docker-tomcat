@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# ------------------------------------------------------------------------------
+# Tomcat - Alpine Linux Build Script
+# ------------------------------------------------------------------------------
+
 overrides=/data/overrides
 webapps=$CATALINA_HOME/webapps
 
@@ -10,6 +14,7 @@ apk update
 apk add --no-cache dumb-init
 
 echo Purging apk cache...
+echo Ignore any cache error below this line.
 apk cache clean
 
 
@@ -22,16 +27,7 @@ rm -rf $webapps/ROOT
 #rm -rf $webapps/manager
 
 
-# Apply file overrides
-echo Applying file overrides...
+# Apply build-time file overrides
+echo Applying build-time file overrides...
 cp -R $overrides/* $CATALINA_HOME
 rm -rf $overrides
-
-
-# Set up user
-echo Setting up user...
-addgroup -g $TC_UID $TC_USER
-adduser -u $TC_UID -G $TC_USER -S -s /usr/sbin/nologin $TC_USER
-chown -R $TC_USER $CATALINA_HOME
-chgrp -R $TC_USER $CATALINA_HOME
-
