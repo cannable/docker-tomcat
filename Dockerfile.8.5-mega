@@ -1,4 +1,4 @@
-ARG tcorigin=tomcat:8.5-jre8
+ARG tcorigin=8.5-jre8
 FROM tomcat:${tcorigin}
 ENV NAME HARDTC
 ENV TC_USER tomcat
