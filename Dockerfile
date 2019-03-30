@@ -1,4 +1,5 @@
-FROM tomcat:9.0-jre8-alpine
+ARG tcorigin=9.0-jre8-alpine
+FROM tomcat:${tcorigin}
 ENV NAME HARDTC
 ENV TC_USER tomcat
 ENV TC_UID 6060
