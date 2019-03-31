@@ -11,7 +11,7 @@ destdir="$CATALINA_HOME/log4j2"
 
 cd /data/log4j2/
 
-apk add gnupg
+apk add --no-cache gnupg
 
 # Grab the log4j PGP keys
 wget -O - ${url_keys} | gpg --import -
@@ -61,3 +61,14 @@ cp log4j2-tomcat.xml "$CATALINA_HOME/conf"
 ln -s "$CATALINA_HOME/conf/log4j2-tomcat.xml" "$destdir/conf/log4j2-tomcat.xml"
 rm "$CATALINA_HOME/conf/logging.properties"
 
+
+# Cleanup
+
+cd /data
+rm -rf ./log4j2
+
+echo Purging apk cache...
+echo Ignore any cache error below this line.
+apk cache clean
+
+echo Completed installing log4j2.

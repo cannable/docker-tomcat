@@ -52,6 +52,7 @@
   <Loggers>
     <Root level="info">
       <AppenderRef ref="CATALINA"/>
+      <AppenderRef ref="CONSOLE"/>
     </Root>
     <Logger name="org.apache.catalina.core.ContainerBase.[Catalina].[localhost]"
         level="info" additivity="false">
