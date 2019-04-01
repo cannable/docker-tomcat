@@ -12,7 +12,12 @@ destdir="$CATALINA_HOME/log4j2"
 echo "log4j2 version: $ver"
 cd /data/log4j2/
 
-apk add --no-cache gnupg
+
+# We have to install Gnupg on Alpine
+if [[ -x $(which apk) ]]; then
+    apk add --no-cache gnupg
+fi
+
 
 # Grab the log4j PGP keys
 echo Importing the Apache Logging PGP KEYS...
@@ -78,8 +83,12 @@ echo Cleaning up staging area...
 cd /data
 rm -rf ./log4j2
 
-echo Purging apk cache...
-echo Ignore any cache error below this line.
-apk cache clean
+
+# Purge apk cache, if we're on Alpine
+if [[ -x $(which apk) ]]; then
+    echo Purging apk cache...
+    echo Ignore any cache error below this line.
+    apk cache clean
+fi
 
 echo Completed installing log4j2.
