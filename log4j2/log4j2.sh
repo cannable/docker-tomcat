@@ -4,8 +4,8 @@ ver=$LOG4J2_VERSION
 filename=apache-log4j-${ver}-bin.tar.gz
 dirname=apache-log4j-${ver}-bin
 url_keys=https://www.apache.org/dist/logging/KEYS
-url_bin=https://mirror.csclub.uwaterloo.ca/apache/logging/log4j/${ver}
-url_sig=https://www.apache.org/dist/logging/log4j/${ver}
+url_bin=https://archive.apache.org/dist/logging/log4j/${ver}
+url_sig=https://archive.apache.org/dist/logging/log4j/${ver}
 destdir="$CATALINA_HOME/log4j2"
 
 
