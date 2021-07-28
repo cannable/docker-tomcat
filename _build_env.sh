@@ -20,6 +20,7 @@ build() {
             --format docker \
             --arch "$arch" \
             --build-arg "TC_VERSION=${version}" \
+            --build-arg "JDK_MAJOR_VERSION=11" \
             -t "cannable/tomcat:${version}-micro" \
             -f "./Dockerfile" .
 
