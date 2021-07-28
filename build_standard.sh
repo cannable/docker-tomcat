@@ -8,4 +8,4 @@ fi
 branch=$1
 tcver=$2
 
-docker build -t "cannable/tomcat:${tcver}-${branch}" -f "./Dockerfile.${tcver}-${branch}" .
+docker build --build-arg "TC_VERSION=micro" -t "cannable/tomcat:${tcver}-micro" -f "./Dockerfile" .

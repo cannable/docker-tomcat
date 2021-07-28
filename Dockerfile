@@ -1,5 +1,5 @@
-ARG tcorigin=9.0-jre8-alpine
-FROM tomcat:${tcorigin}
+ARG TC_VERSION=9.0
+FROM tomcat:${TC_VERSION}-jre8-alpine
 
 ENV NAME HARDTC
 ENV TC_USER tomcat
