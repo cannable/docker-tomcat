@@ -1,13 +1,28 @@
 # ------------------------------------------------------------------------------
-# Ansible Container
+# Tomcat Container
 # ------------------------------------------------------------------------------
-# This container has Ansible and a few Dell and VMware modules installed.
+# A container image with Tomcat and a few hardening tweaks.
+
+# ------------------------------------------------------------------------------
+# Environment
+
+# Build-time variables
 
 IMAGE="cannable/tomcat"
-#ARCHES=(amd64 arm64)
-ARCHES=(amd64)
-#TC_VERSIONS=(7.0 8.0 8.5 9.0 10.0)
-TC_VERSIONS=("8.5")
+ARCHES=(amd64 arm64)
+
+TC_VERSIONS=("8.5.69" "9.0.52" "10.0.10")
+JDK_MAJOR_VERSION=11
+
+LOG4J2_ENABLED=1
+LOG4J2_VERSION=2.14.1
+
+# Run-time variables
+
+CATALINA_HOME=/opt/tomcat
+NAME=HARDTC
+TC_USER=tomcat
+TC_UID=6060
 
 build() {
 

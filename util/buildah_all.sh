@@ -3,26 +3,9 @@
 # ------------------------------------------------------------------------------
 # A container image with Tomcat and a few hardening tweaks.
 
-# ------------------------------------------------------------------------------
-# Environment
+. "$(dirname $(readlink -f $0))/_functions.sh"
+. "$(dirname $(dirname $(readlink -f $0)))/_build_env.sh"
 
-# Build-time variables
-
-IMAGE="cannable/tomcat"
-ARCHES=(amd64 arm64)
-
-TC_VERSIONS=("8.5.69" "9.0.52" "10.0.10")
-JDK_MAJOR_VERSION=11
-
-LOG4J2_ENABLED=1
-LOG4J2_VERSION=2.14.1
-
-# Run-time variables
-
-CATALINA_HOME=/opt/tomcat
-NAME=HARDTC
-TC_USER=tomcat
-TC_UID=6060
 
 # ------------------------------------------------------------------------------
 # Function Definitions
