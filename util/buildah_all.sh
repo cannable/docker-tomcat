@@ -3,14 +3,22 @@
 # ------------------------------------------------------------------------------
 # A container image with Tomcat and a few hardening tweaks.
 
+# ------------------------------------------------------------------------------
+# Environment
+
+# Build-time variables
+
 IMAGE="cannable/tomcat"
+ARCHES=(amd64 arm64)
+
+TC_VERSIONS=("8.5.69" "9.0.52" "10.0.10")
 JDK_MAJOR_VERSION=11
+
 LOG4J2_ENABLED=1
 LOG4J2_VERSION=2.14.1
-#ARCHES=(amd64 arm64)
-ARCHES=(amd64)
-#TC_VERSIONS=(8.5.69 9.0.52 10.0.10)
-TC_VERSIONS=("10.0.10")
+
+# Run-time variables
+
 CATALINA_HOME=/opt/tomcat
 NAME=HARDTC
 TC_USER=tomcat
