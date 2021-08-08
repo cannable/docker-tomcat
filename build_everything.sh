@@ -1,10 +1,13 @@
 # ------------------------------------------------------------------------------
-# Tomcat Container
+# Build Everything
 # ------------------------------------------------------------------------------
-# A container image with Tomcat and a few hardening tweaks.
+# This script will build all images.
 
-. "$(dirname $(readlink -f $0))/_functions.sh"
-. "$(dirname $(dirname $(readlink -f $0)))/_build_env.sh"
+# NOTE: You should use this, first, before the build script under util, because
+# this will cache all the required bits.
+
+. ./util/_functions.sh
+. ./_build_env.sh
 
 
 # ------------------------------------------------------------------------------
