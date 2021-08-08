@@ -7,8 +7,8 @@ IMAGE="cannable/tomcat"
 JDK_MAJOR_VERSION=11
 #ARCHES=(amd64 arm64)
 ARCHES=(amd64)
-#TC_VERSIONS=(7.0 8.0 8.5 9.0 10.0)
-TC_VERSIONS=("10.0.8")
+#TC_VERSIONS=(8.5.69 9.0.52 10.0.10)
+TC_VERSIONS=("10.0.10")
 CATALINA_HOME=/opt/tomcat
 NAME=HARDTC
 TC_USER=tomcat
@@ -18,8 +18,8 @@ TC_UID=6060
 # Function Definitions
 
 cache() {
-    fname=$1
-    url=$2
+    local fname=$1
+    local url=$2
 
     cachename="cache/${fname}"
 
@@ -32,7 +32,7 @@ cache() {
 }
 
 verify() {
-    sig_file=$1
+    local sig_file=$1
 
     sig_path="cache/${sig_file}"
 
@@ -53,7 +53,7 @@ verify() {
 }
 
 build_common_base() {
-    arch=$1
+    local arch=$1
 
     c=$(buildah from --arch "$arch" alpine)
     buildah run $c apk update
@@ -65,8 +65,8 @@ build_common_base() {
 }
 
 build_image() {
-    arch=$1
-    ver=$2
+    local arch=$1
+    local ver=$2
 
     pkgname="apache-tomcat-${ver}"
     filename="apache-tomcat-${ver}.tar.gz"

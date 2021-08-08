@@ -5,15 +5,15 @@
 
 
 build() {
-    arch=$1
+    local arch=$1
 
     echo Building $arch...
     buildah bud --arch "$arch" --tag "${IMAGE}:${arch}-${version}" --build-arg "${VERSION_ARG}=${version}" -f ./Dockerfile .
 }
 
 mkmanifest() {
-    target=$1
-    version=$2
+    local target=$1
+    local version=$2
 
     echo "Creating manifest: ${IMAGE}:${version}"
     buildah manifest create "${IMAGE}:${version}"
@@ -28,7 +28,7 @@ mkmanifest() {
 }
 
 push_image() {
-    target=$1
+    local target=$1
 
     for arch in ${ARCHES[@]}; do
         echo "Source:      ${IMAGE}:${arch}-${version}"
