@@ -64,6 +64,20 @@ verify() {
 
 }
 
+build() {
+    echo Building common-base image for $arch...
+    build_common_base $arch
+
+    for ver in ${TC_VERSIONS[@]}; do
+
+        build_image $arch $ver
+
+    done
+    
+    podman image rm "${IMAGE}:${arch}-common-base"
+
+}
+
 build_common_base() {
     local arch=$1
 

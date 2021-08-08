@@ -7,25 +7,6 @@
 . "$(dirname $(dirname $(readlink -f $0)))/_build_env.sh"
 
 
-build() {
-
-    arch=$1
-
-    for version in ${TC_VERSIONS[@]}; do
-        echo Building $arch...
-
-        buildah bud \
-            --format docker \
-            --arch "$arch" \
-            --build-arg "TC_VERSION=${version}" \
-            --build-arg "JDK_MAJOR_VERSION=11" \
-            -t "cannable/tomcat:${version}-micro" \
-            -f "./Dockerfile" .
-
-    done
-
-}
-
 # ------------------------------------------------------------------------------
 # Sanity Checks
 
@@ -54,14 +35,5 @@ fi
 
 
 for arch in ${ARCHES[@]}; do
-    echo Building common-base image for $arch...
-    build_common_base $arch
-
-    for ver in ${TC_VERSIONS[@]}; do
-
-        build_image $arch $ver
-
-    done
-    
-    podman image rm "${IMAGE}:${arch}-common-base"
+    build $arch
 done
