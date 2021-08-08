@@ -104,22 +104,10 @@ build_image() {
 
     buildah run $c ln -s "${CATALINA_HOME}/conf/setenv.sh" "${CATALINA_HOME}/bin/setenv.sh"
 
-    # First run config
-    buildah copy \
-        --chown root:root \
-        --chmod 0644 \
-        $c data/firstrun /data/firstrun
-
-
     buildah copy \
         --chown root:root \
         --chmod 0755 \
         $c data/init.sh /data/init.sh
-
-    buildah copy \
-        --chown root:root \
-        --chmod 0644 \
-        $c data/firstrun /data/firstrun
 
     buildah config  \
         --env "NAME=${NAME}" \
