@@ -12,27 +12,28 @@ build() {
 }
 
 mkmanifest() {
-    local target=$1
-    local version=$2
+    local ver=$1
+    local target=$2
 
-    echo "Creating manifest: ${IMAGE}:${version}"
-    buildah manifest create "${IMAGE}:${version}"
+    echo "Creating manifest: ${IMAGE}:${ver}"
+    buildah manifest create "${IMAGE}:${ver}"
 
     for arch in ${ARCHES[@]}; do
-        buildah manifest add "${IMAGE}:${version}" "docker://${target}/${IMAGE}:${arch}-${version}"
+        buildah manifest add "${IMAGE}:${ver}" "docker://${target}/${IMAGE}:${arch}-${ver}"
     done
 
-    buildah manifest push -f v2s2 "${IMAGE}:${version}" "docker://${target}/${IMAGE}:${version}"
+    buildah manifest push -f v2s2 "${IMAGE}:${ver}" "docker://${target}/${IMAGE}:${ver}"
 
-    buildah manifest rm "${IMAGE}:${version}"
+    buildah manifest rm "${IMAGE}:${ver}"
 }
 
 push_image() {
-    local target=$1
+    local ver=$1
+    local target=$2
 
     for arch in ${ARCHES[@]}; do
-        echo "Source:      ${IMAGE}:${arch}-${version}"
-        echo "Destination: ${target}${IMAGE}:${arch}-${version}"
-        buildah push -f v2s2 "${IMAGE}:${arch}-${version}" "${target}${IMAGE}:${arch}-${version}"
+        echo "Source:      ${IMAGE}:${arch}-${ver}"
+        echo "Destination: ${target}${IMAGE}:${arch}-${ver}"
+        buildah push -f v2s2 "${IMAGE}:${arch}-${ver}" "${target}${IMAGE}:${arch}-${ver}"
     done
 }

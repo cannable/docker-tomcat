@@ -12,4 +12,4 @@ fi
 version=$1
 registry=$2
 
-push_image "docker://${registry}/"
+push_image "${version}" "docker://${registry}/"
