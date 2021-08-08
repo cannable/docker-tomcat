@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
-# Ansible Container
+# Tomcat Container
 # ------------------------------------------------------------------------------
-# This container has Ansible and a few Dell and VMware modules installed.
+# A container image with Tomcat and a few hardening tweaks.
 
 IMAGE="cannable/tomcat"
 JDK_MAJOR_VERSION=11
@@ -120,7 +120,7 @@ build_image() {
         --port 8080 \
         --workingdir "${CATALINA_HOME}" \
         --entrypoint '["/usr/bin/dumb-init", "--"]' \
-        --cmd "/bin/bash /data/init.sh"  \
+        --cmd "/bin/sh /data/init.sh"  \
         $c
 
     buildah commit --format docker --rm $c "${IMAGE}:${arch}-${ver}"
