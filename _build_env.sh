@@ -216,7 +216,8 @@ install_log4j() {
     buildah run $c rm -rf "/tmp/${filename}" "/tmp/${dirname}"
 
     buildah copy $c "log4j2/setenv.sh" "${CATALINA_HOME}/conf"
-    buildah copy $c "log4j2/log4j2-tomcat.xml" "${CATALINA_HOME}/log4j2/conf"
+    buildah copy $c "log4j2/log4j2-tomcat.xml" "${CATALINA_HOME}/conf"
+    buildah run $c ln -s "${CATALINA_HOME}/conf/log4j2-tomcat.xml" "${CATALINA_HOME}/log4j2/conf/log4j2-tomcat.xml"
 
     buildah run $c rm "${CATALINA_HOME}/conf/logging.properties"
 
