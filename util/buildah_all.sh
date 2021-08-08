@@ -96,6 +96,21 @@ build_image() {
 
     buildah run $c mkdir /data
 
+    # setenv.sh redirection
+    buildah copy \
+        --chown root:root \
+        --chmod 0644 \
+        $c data/setenv.sh "${CATALINA_HOME}/conf/setenv.sh"
+
+    buildah run $c ln -s "${CATALINA_HOME}/conf/setenv.sh" "${CATALINA_HOME}/bin/setenv.sh"
+
+    # First run config
+    buildah copy \
+        --chown root:root \
+        --chmod 0644 \
+        $c data/firstrun /data/firstrun
+
+
     buildah copy \
         --chown root:root \
         --chmod 0755 \
