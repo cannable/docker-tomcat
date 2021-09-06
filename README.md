@@ -1,74 +1,102 @@
 # docker-tomcat
 
-This provides Tomcat plus some simple/dumb scripting to help automate some
-common tasks. Oh, and dumb-init is being used.
+What it says on the can - Apache Tomcat, but with a few hardening bits here and
+there. Log4j too (if you don't build it out).
 
-# The Various Tags
+Most of this doc will outline key things to note about this container image, in
+a haphazard sort of way.
 
-The first part of the tag specifies the version of Tomcat and is required.
-There are 'micro' and 'macro' versions. The micro versions are based on Alpine,
-while the macro versions are based on Debian (these choices are based entirely
-on what Apache builds... I'm lazy that way).
+# Obtaining
 
-There are a few -log4j2 tags, as well. In these containers, log4j2 handles
-logging for Tomcat. JULI is still there, but nerfed. A log4j2-tomcat.xml file
-is dropped that approximates the same functionality as the stock
-logging.properties (there is one minor tweak - log files are rotated daily and
-pruned after 100 days).
+The easiest way is to pull one of the major version tags. NOTE: There's no
+latest tag and these tags only apply to major versions, so, ex. 8 is actually
+Tomcat 8.5 and not 8.0 (which is the convention Apache uses for organising the
+downloads site).
 
-# Changing Run-Time Configuration
+# setenv.sh
 
-You can change these settings at run time.
+This is actually installed to conf and symlinked to the bin directory. The
+reason for this is to use a Docker volume to make configuration persistent
+without requiring an extra volume mount.
 
-**ENV_TC_USER**
+# Log4j2
+
+Installation mostly follows the guidance from Apache's Logging group. The three
+log4j2 jar archives needed to handle Tomcat logging are installed to
+/opt/tomcat/log4j2/lib. A config file mimicking the default Tomcat logging
+config (but with 100 day rotation) is installed to /opt/tomcat/conf and
+symlinked to /opt/tomcat/log4j2/conf, just like setenv.sh. The CLASSPATH is
+extended to include these directories. JULI is still there, but nerfed (deleted
+logging.properties).
+
+# Run-Time Environment Variables
+
+## CATALINA_HOME
+
+What you'd expect. You shouldn't change this.
+
+## TC_USER
 
 Sets the user and group name of the user that runs Tomcat.
 
-**ENV_TC_UID**
+## TC_UID
 
 Sets the user and group ID of the user that runs Tomcat.
 
-# Changing Build-Time Configuration
+# Building
 
-There are two things in the config file to care about:
+The primary reason for retooling this project was to swap out the build scripts
+with something more readily usable than the previous scripts. I'm still not
+happy with them, but they work. Consider current state a temporary mess until I
+have some time and desire to clean up said mess.
 
-**FROM**
+build_everything.sh is probably what you want to run. It will create a cache
+directory to store various blobs (ex. Tomcat tar archives, signature files,
+etc.) and verify signatures before running the builds.
 
-You can change this via the tcorigin build argument.
+There are some other scripts you can peruse, but they're mostly there for me to
+shotgun a bunch of images and manifests to the Docker Hub.
 
-**EXPOSE 8443/tcp, EXPOSE 8080/tcp**
+## Build-Time Environment Variables
 
-Change this to match your Tomcat config.
+These are environment variables defined in _build_en.sh.
 
-**LOG4J2_VERSION**
+### ARCHES
 
-This only applies to Log4j2 Dockerfiles. The version specified here will be
-installed by log4j2.sh. Change this to suit your requirements.
+This is an array of architectures for which to build container images. The build
+scripts use buildah. You should set up binfmt_misc so you can make multiarch
+images.
 
-**File Overrides**
+### TC_VERSIONS
 
-Any files/directories created under this directory will be merged into the
-Tomcat root directory, replacing the originals. Good candidates include config
-files or any webapps you want deployed immediately.
+This is another array containing Tomcat versions for which to build a container
+image.
 
-An example setenv.sh is located at overrides/bin/setenv.sh.
+Builds were tested with 8.5, 9.0, and 10.0. Older versions will probably work,
+though the download pass may not work quite right. If that occurs, try
+downloading the tar archive and signature manually and putting it into ./cache.
 
-# Build-Time Automation
+### JDK_MAJOR_VERSION
 
-Alter data/build.sh. This script deletes all default webapps except the
-manager, then replaces files with overrides.
+This specifies the version of the OpenJDK to install, via Alpine's package
+repos. I could have made this an array too, but the scripts were getting plenty
+complicated as it was.
 
-# Changing Run-Time Config
+### LOG4J2_ENABLED
 
-Alter data/init.sh. Out of the box, this just starts Tomcat as a non-root user.
+If you set this to 0, the build scripts will skip the Log4j bits.
+
+### LOG4J2_VERSION
+
+Version of Log4j to bundle.
 
 # Why
 
 I figured I'd leave this comment at the end because no one will or should care.
-Why did I create this? I was bored. I wanted to experiment with Docker and
-chose to mess with something I deal with on a daily basis. This was my first
-kick at the can, Docker-wise and, after I got the initial implementation to
-work, I didn't really have any plans on maintaining it.
+Why did I create this? I was bored. I wanted to experiment with Docker and chose
+to mess with something I deal with on a daily basis. This was my first kick at
+the can, Docker-wise and, after I got the initial implementation to work, I
+didn't really have any plans on maintaining it.
 
 I have since made some revisions. Why? My design sucked. Seriously. I threw
 something together in a few hours that worked for a few different versions of
@@ -77,17 +105,6 @@ autobuilds working, but used a ton of copying and pasting in places. That's not
 the way I typically roll, and the garbage-tier quality of it all bothered me.
 
 Unfortunately, as this is just a hobby of mine, life, uh... found a way to get
-in the way. I've spent months wanting to circle back and fix this (the server
-admin in me just gagged a bit because I used "circle back" in a sentence
-without batting an eyelash). I finally found some time to dedicate to fixing
-this mess.
-
-After finally fixing the directory structure stuff (which was pretty trivial,
-tbh), I was left asking "what next?" Well, let's experiment. Let's do volumes,
-as I really should have done that to start with. Done. Next... Ummmm....
-Log4j2, that's a good one. Let's do that. Okay, done. Now what?
-
-That is, ultimately, what this project is - somewhere for me to experiment with
-Docker and Tomcat stuff. If anyone ever uses this in production (I might fork
-it internally sometime, actually), feel free to drop me a line, and I'm sorry
-btw.
+in the way. The scripts are not in a state where I'm happy with them. I've got
+some ideas, but I'm probably just going to make something more generic and
+outside of this project.
