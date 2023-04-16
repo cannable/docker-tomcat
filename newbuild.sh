@@ -46,12 +46,41 @@ checkFileExists() {
     fi
 
     if [ ! -f $1 ]; then
-        echo "    FAIL: ${1} does not exist!"
+        echo "FAIL: ${1} does not exist!"
         echo ""
         echo "Build terminated."
         exit 1
     fi
-    echo "    ${1} exists."
+    echo "${1} exists."
+}
+
+# checkFileSignature -- Check file signature with GnuPG.
+checkFileSignature() {
+    if [ -z $1 ]; then
+        echo "checkFileSignature: no argument passed."
+        exit 1
+    fi
+
+    local filePath="${1}.asc"
+
+    checkFileExists "$filePath"
+
+    echo "Checking signature of artifact."
+    echo "--- Begin: GnuPG Output ---------------------------------------------"
+
+    gpg --verify "$filePath"
+    local gpgExitStatus=$?
+
+    echo "--- End: GnuPG Output -----------------------------------------------"
+
+    if [ $gpgExitStatus -ne 0 ]; then
+        echo "FAIL: Check of PGP signature failed. This is catastrophically bad"
+        echo "and this script will exit. Possible causes include corruption of"
+        echo "cached artifacts or a broken chain of trust in your GnuPG"
+        echo "keyring. Check the output from GnuPG for clues."
+        echo ""
+        exit 2
+    fi
 }
 
 # ------------------------------------------------------------------------------
@@ -101,7 +130,7 @@ TOMCAT_PKG_PATH="./cache/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
 # 'Main'
 
 echo ""
-echo "Session configuration is:"
+echo "=== Session Configuration ================================================"
 echo "    CACHE_DIR=${CACHE_DIR}"
 echo "    JDK_MAJOR_VERSION=${JDK_MAJOR_VERSION}"
 echo "    TOMCAT_VERSION=${TOMCAT_VERSION}"
@@ -109,16 +138,16 @@ echo "    BUILDER=${BUILDER}"
 echo ""
 
 
-echo "Performing sanity checks."
+echo "=== Performing Sanity Checks ============================================"
 
 checkFileExists "${TOMCAT_PKG_PATH}"
-checkFileExists "${TOMCAT_PKG_PATH}.asc"
+checkFileSignature "${TOMCAT_PKG_PATH}"
 
 # TODO: Check Tomcat hash
 
 # Build image
 echo ""
-echo "Perform build."
+echo "=== Perform Build ======================================================="
 case $BUILDER in
     docker)
         echo docker build \
@@ -140,4 +169,4 @@ case $BUILDER in
         ;;
 esac
 
-echo "Build complete."
+echo "=== Build Complete ======================================================"
