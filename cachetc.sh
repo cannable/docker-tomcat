@@ -23,12 +23,29 @@ printUsage() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options:"
-    echo "    -h        Print this help."
     echo "    -c path   Set the artifact cache directory."
     echo "              Defaults to ${DEFAULT_CACHE_DIR}"
+    echo "    -h        Print this help."
+    echo "    -f        Overwrite any existing artifacts."
     echo "    -t ver    Set Tomcat version to build."
     echo "              Defaults to ${DEFAULT_TOMCAT_VERSION}"
     echo ""
+}
+
+# getFile -- Downloads artifact.
+getFile() {
+    if [ -z $1 -o -z $2 ]; then
+        echo "getFile: argument issue."
+        exit 1
+    fi
+
+    local url="$1"
+    local outFile="$2"
+
+    if [ ! -f $outFile -o $FORCE -ne 0 ]; then
+        curl -o "$outFile" "$url"
+    fi
+
 }
 
 # ------------------------------------------------------------------------------
@@ -36,8 +53,9 @@ printUsage() {
 
 CACHE_DIR="${DEFAULT_CACHE_DIR}"
 TOMCAT_VERSION="${DEFAULT_TOMCAT_VERSION}"
+FORCE="${DEFAULT_FORCE}"
 
-while getopts "c:ht:" opt; do
+while getopts "c:hft:" opt; do
     case $opt in
         c)
             CACHE_DIR="${OPTARG}"
@@ -45,6 +63,9 @@ while getopts "c:ht:" opt; do
         h)
             printUsage
             exit
+            ;;
+        f)
+            FORCE=1
             ;;
         t)
             TOMCAT_VERSION="${OPTARG}"
@@ -97,8 +118,11 @@ curl "$KEYS_URL" | gpg --import -
 
 echo ""
 echo "Downloading Tomcat and signature file."
-curl -o "${CACHE_DIR}/${TOMCAT_FILENAME}" "${TOMCAT_URL}"
-curl -o "${CACHE_DIR}/${TOMCAT_FILENAME}.asc" "${TOMCAT_URL}.asc"
+
+getFile "${TOMCAT_URL}" "${CACHE_DIR}/${TOMCAT_FILENAME}"
+getFile "${TOMCAT_URL}.asc" "${CACHE_DIR}/${TOMCAT_FILENAME}.asc"
+#curl -o "${CACHE_DIR}/${TOMCAT_FILENAME}" "${TOMCAT_URL}"
+#curl -o "${CACHE_DIR}/${TOMCAT_FILENAME}.asc" "${TOMCAT_URL}.asc"
 
 echo ""
 echo "Operation Complete."
