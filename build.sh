@@ -113,7 +113,7 @@ while getopts "a:bc:df:hj:p:t:" opt; do
             CACHE_DIR="${OPTARG}"
             ;;
         d)
-            builder="docker"
+            BUILDER="docker"
             ;;
         f)
             DOCKER_FILE="${OPTARG}"
