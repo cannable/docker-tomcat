@@ -16,7 +16,7 @@ ARG JDK_MAJOR_VERSION=11
 #   Specifies the version of Tomcat that will be installed.
 #   This is primarily used for tagging the image.
 #
-ARG TOMCAT_VERSION=8.5.87
+ARG TOMCAT_VERSION=9.0.73
 
 # TOMCAT_PKG_NAME
 #
