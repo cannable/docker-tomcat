@@ -146,7 +146,7 @@ TOMCAT_PKG_PATH="./cache/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
 IMAGE_TAG="cannable/tomcat:${TOMCAT_VERSION}-openjdk${JDK_MAJOR_VERSION}"
 
 if [ $TAG_POSTFIX ]; then
-    IMAGE_TAG="${IMAGE_TAG}-$TAG_POSTFIX"
+    IMAGE_TAG="${IMAGE_TAG}-${TAG_POSTFIX}"
 fi
 
 BUILD_ARCH_LINE=""
@@ -161,6 +161,7 @@ if [ $BUILD_ARCH ]; then
             ;;
     esac
 
+    IMAGE_TAG="${IMAGE_TAG}-${BUILD_ARCH}"
 fi
 
 # ------------------------------------------------------------------------------
