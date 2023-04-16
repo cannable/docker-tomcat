@@ -9,11 +9,12 @@
 # ------------------------------------------------------------------------------
 # Defaults
 
-DEFAULT_CACHE_DIR="./cache"
-DEFAULT_JDK_MAJOR_VERSION=11
-DEFAULT_TOMCAT_VERSION=9.0.73
 DEFAULT_BUILDER="buildah"
 DEFAULT_BUILD_ARCH=""
+DEFAULT_CACHE_DIR="./cache"
+DEFAULT_DOCKER_FILE="./Dockerfile"
+DEFAULT_JDK_MAJOR_VERSION=11
+DEFAULT_TOMCAT_VERSION=9.0.73
 
 
 # ------------------------------------------------------------------------------
@@ -90,13 +91,14 @@ checkFileSignature() {
 # ------------------------------------------------------------------------------
 # Handle command line arguments
 
-CACHE_DIR="${DEFAULT_CACHE_DIR}"
-JDK_MAJOR_VERSION="${DEFAULT_JDK_MAJOR_VERSION}"
-TOMCAT_VERSION="${DEFAULT_TOMCAT_VERSION}"
 BUILDER="${DEFAULT_BUILDER}"
 BUILD_ARCH="${DEFAULT_BUILD_ARCH}"
+CACHE_DIR="${DEFAULT_CACHE_DIR}"
+DOCKER_FILE="${DEFAULT_DOCKER_FILE}"
+JDK_MAJOR_VERSION="${DEFAULT_JDK_MAJOR_VERSION}"
+TOMCAT_VERSION="${DEFAULT_TOMCAT_VERSION}"
 
-while getopts "a:bc:dhj:t:" opt; do
+while getopts "a:bc:df:hj:t:" opt; do
     case $opt in
         a)
             BUILD_ARCH="${OPTARG}"
@@ -108,7 +110,10 @@ while getopts "a:bc:dhj:t:" opt; do
             CACHE_DIR="${OPTARG}"
             ;;
         d)
-            BUILDER="docker"
+            builder="docker"
+            ;;
+        f)
+            DOCKER_FILE="${OPTARG}"
             ;;
         h)
             printUsage
@@ -176,7 +181,7 @@ case $BUILDER in
             --build-arg "TOMCAT_VERSION=${TOMCAT_VERSION}" \
             $BUILD_ARCH_LINE \
             -t "$IMAGE_TAG" \
-            -f ./Dockerfile .
+            -f "$DOCKER_FILE" .
         ;;
     buildah)
         buildah bud \
@@ -184,7 +189,7 @@ case $BUILDER in
             --build-arg "TOMCAT_VERSION=${TOMCAT_VERSION}" \
             $BUILD_ARCH_LINE \
             -t "$IMAGE_TAG" \
-            -f ./Dockerfile .
+            -f "$DOCKER_FILE" .
         ;;
     *)
         echo "FAIL: Invalid builder ${BUILDER}."
