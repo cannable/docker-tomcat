@@ -14,6 +14,7 @@ DEFAULT_BUILD_ARCH=""
 DEFAULT_CACHE_DIR="./cache"
 DEFAULT_DOCKER_FILE="./Dockerfile"
 DEFAULT_JDK_MAJOR_VERSION=11
+DEFAULT_TAG_POSTFIX=""
 DEFAULT_TOMCAT_VERSION=9.0.73
 
 
@@ -28,18 +29,19 @@ printUsage() {
     echo "The default builder is ${DEFAULT_BUILDER}."
     echo ""
     echo "Options:"
-    echo "    -a arch   Set the architecture for build."
-    echo "              To use this for creating multiarch images, you need"
-    echo "              qemu-user-static set up properly."
-    echo "    -b        Build with buildah."
-    echo "    -c path   Set the artifact cache directory."
-    echo "              Defaults to ${DEFAULT_CACHE_DIR}"
-    echo "    -d        Build with docker."
-    echo "    -h        Print this help."
-    echo "    -j ver    Set OpenJDK major version to build."
-    echo "              Defaults to ${DEFAULT_JDK_MAJOR_VERSION}"
-    echo "    -t ver    Set Tomcat version to build."
-    echo "              Defaults to ${DEFAULT_TOMCAT_VERSION}"
+    echo "    -a arch      Set the architecture for build."
+    echo "                 To use this for creating multiarch images, you need"
+    echo "                 qemu-user-static set up properly."
+    echo "    -b           Build with buildah."
+    echo "    -c path      Set the artifact cache directory."
+    echo "                 Defaults to ${DEFAULT_CACHE_DIR}"
+    echo "    -d           Build with docker."
+    echo "    -h           Print this help."
+    echo "    -j ver       Set OpenJDK major version to build."
+    echo "                 Defaults to ${DEFAULT_JDK_MAJOR_VERSION}"
+    echo "    -p postfix   Append '-postfix' to the image tag"
+    echo "    -t ver       Set Tomcat version to build."
+    echo "                 Defaults to ${DEFAULT_TOMCAT_VERSION}"
     echo ""
 }
 
@@ -96,9 +98,10 @@ BUILD_ARCH="${DEFAULT_BUILD_ARCH}"
 CACHE_DIR="${DEFAULT_CACHE_DIR}"
 DOCKER_FILE="${DEFAULT_DOCKER_FILE}"
 JDK_MAJOR_VERSION="${DEFAULT_JDK_MAJOR_VERSION}"
+TAG_POSTFIX="${DEFAULT_TAG_POSTFIX}"
 TOMCAT_VERSION="${DEFAULT_TOMCAT_VERSION}"
 
-while getopts "a:bc:df:hj:t:" opt; do
+while getopts "a:bc:df:hj:p:t:" opt; do
     case $opt in
         a)
             BUILD_ARCH="${OPTARG}"
@@ -122,6 +125,9 @@ while getopts "a:bc:df:hj:t:" opt; do
         j)
             JDK_MAJOR_VERSION="${OPTARG}"
             ;;
+        p)
+            TAG_POSTFIX="${OPTARG}"
+            ;;
         t)
             TOMCAT_VERSION="${OPTARG}"
             ;;
@@ -138,6 +144,10 @@ done
 
 TOMCAT_PKG_PATH="./cache/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
 IMAGE_TAG="cannable/tomcat:${TOMCAT_VERSION}-openjdk${JDK_MAJOR_VERSION}"
+
+if [ $TAG_POSTFIX ]; then
+    IMAGE_TAG="${IMAGE_TAG}-$TAG_POSTFIX"
+fi
 
 BUILD_ARCH_LINE=""
 
