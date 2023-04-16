@@ -1,8 +1,8 @@
 # ******************************************************************************
-# Alpine Tomcat Container Image
+# Oracle Linux Tomcat Container Image
 # ******************************************************************************
 
-FROM alpine
+FROM oraclelinux:9
 
 # JDK_MAJOR_VERSION
 #
@@ -44,8 +44,9 @@ ENV CATALINA_HOME=/opt/tomcat \
 
 COPY "${CACHE_DIR}/${TOMCAT_PKG_NAME}.tar.gz" "/tmp/${TOMCAT_PKG_NAME}.tar.gz"
 
-RUN apk add --no-cache \
-    "openjdk${JDK_MAJOR_VERSION}-jre-headless" && \
+RUN if [ $JDK_MAJOR_VERSION -eq 8 ]; then JDK_MAJOR_VERSION=1.8.0 ; fi ; \
+    dnf -y install "java-${JDK_MAJOR_VERSION}-openjdk-headless" && \
+    dnf clean all && \
     tar -xzf "/tmp/${TOMCAT_PKG_NAME}.tar.gz" -C /tmp/ && \
     mv "/tmp/${TOMCAT_PKG_NAME}" "${CATALINA_HOME}" && \
     rm -f "/tmp/${TOMCAT_PKG_NAME}.tar.gz" && \
@@ -55,7 +56,7 @@ RUN apk add --no-cache \
     rm -rf "${webapps}/ROOT"
 
 COPY data/setenv.sh "${CATALINA_HOME}/bin/setenv.sh"
-COPY --chown=root:root --chmod=0755 data/init.sh.alpine /bin/init.sh
+COPY --chown=root:root --chmod=0755 data/init.sh.gnu /bin/init.sh
 
 
 # ------------------------------------------------------------------------------
