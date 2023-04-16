@@ -150,14 +150,14 @@ echo ""
 echo "=== Perform Build ======================================================="
 case $BUILDER in
     docker)
-        echo docker build \
+        docker build \
             --build-arg "JDK_MAJOR_VERSION=${JDK_MAJOR_VERSION}" \
             --build-arg "TOMCAT_VERSION=${TOMCAT_VERSION}" \
             -t "cannable/tomcat:${TOMCAT_VERSION}-openjdk${JDK_MAJOR_VERSION}" \
             -f ./Dockerfile .
         ;;
     buildah)
-        echo buildah bud \
+        buildah bud \
             --build-arg "JDK_MAJOR_VERSION=${JDK_MAJOR_VERSION}" \
             --build-arg "TOMCAT_VERSION=${TOMCAT_VERSION}" \
             -t "cannable/tomcat:${TOMCAT_VERSION}-openjdk${JDK_MAJOR_VERSION}" \
