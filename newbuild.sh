@@ -12,6 +12,7 @@
 DEFAULT_CACHE_DIR="./cache"
 DEFAULT_JDK_MAJOR_VERSION=11
 DEFAULT_TOMCAT_VERSION=9.0.73
+DEFAULT_BUILDER="buildah"
 
 
 # ------------------------------------------------------------------------------
@@ -22,10 +23,14 @@ printUsage() {
     echo ""
     echo "Usage: $0 [OPTIONS]"
     echo ""
+    echo "The default builder is ${DEFAULT_BUILDER}."
+    echo ""
     echo "Options:"
     echo "    -h        Print this help."
+    echo "    -b        Build with buildah."
     echo "    -c path   Set the artifact cache directory."
     echo "              Defaults to ${DEFAULT_CACHE_DIR}"
+    echo "    -d        Build with docker."
     echo "    -j ver    Set OpenJDK major version to build."
     echo "              Defaults to ${DEFAULT_JDK_MAJOR_VERSION}"
     echo "    -t ver    Set Tomcat version to build."
@@ -55,15 +60,22 @@ checkFileExists() {
 CACHE_DIR="${DEFAULT_CACHE_DIR}"
 JDK_MAJOR_VERSION="${DEFAULT_JDK_MAJOR_VERSION}"
 TOMCAT_VERSION="${DEFAULT_TOMCAT_VERSION}"
+BUILDER="${DEFAULT_BUILDER}"
 
-while getopts "hc:t:j:" opt; do
+while getopts "bc:dhj:t:" opt; do
     case $opt in
-        h)
-            printUsage
-            exit
+        b)
+            BUILDER="buildah"
             ;;
         c)
             CACHE_DIR="${OPTARG}"
+            ;;
+        d)
+            BUILDER="docker"
+            ;;
+        h)
+            printUsage
+            exit
             ;;
         j)
             JDK_MAJOR_VERSION="${OPTARG}"
@@ -93,6 +105,7 @@ echo "Session configuration is:"
 echo "    CACHE_DIR=${CACHE_DIR}"
 echo "    JDK_MAJOR_VERSION=${JDK_MAJOR_VERSION}"
 echo "    TOMCAT_VERSION=${TOMCAT_VERSION}"
+echo "    BUILDER=${BUILDER}"
 echo ""
 
 
@@ -103,8 +116,28 @@ checkFileExists "${TOMCAT_PKG_PATH}.asc"
 
 # TODO: Check Tomcat hash
 
-buildah bud \
-    --build-arg "JDK_MAJOR_VERSION=${JDK_MAJOR_VERSION}" \
-    --build-arg "TOMCAT_VERSION=${TOMCAT_VERSION}" \
-    -t "cannable/tomcat:${TOMCAT_VERSION}-openjdk${JDK_MAJOR_VERSION}" \
-    -f ./Dockerfile .
+# Build image
+echo ""
+echo "Perform build."
+case $BUILDER in
+    docker)
+        echo docker build \
+            --build-arg "JDK_MAJOR_VERSION=${JDK_MAJOR_VERSION}" \
+            --build-arg "TOMCAT_VERSION=${TOMCAT_VERSION}" \
+            -t "cannable/tomcat:${TOMCAT_VERSION}-openjdk${JDK_MAJOR_VERSION}" \
+            -f ./Dockerfile .
+        ;;
+    buildah)
+        echo buildah bud \
+            --build-arg "JDK_MAJOR_VERSION=${JDK_MAJOR_VERSION}" \
+            --build-arg "TOMCAT_VERSION=${TOMCAT_VERSION}" \
+            -t "cannable/tomcat:${TOMCAT_VERSION}-openjdk${JDK_MAJOR_VERSION}" \
+            -f ./Dockerfile .
+        ;;
+    *)
+        echo "FAIL: Invalid builder ${BUILDER}."
+        exit 1
+        ;;
+esac
+
+echo "Build complete."
